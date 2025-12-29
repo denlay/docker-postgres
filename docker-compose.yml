@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16-alpine # Menggunakan versi terbaru yang ringan
+    container_name: teksat_postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5439:5432"
+    volumes:
+      # 1. Simpan data database di host agar tidak hilang saat container dihapus
+      - ./postgres_data:/var/lib/postgresql/data
+      
+      # 2. Mounting file konfigurasi kustom dari folder host
+      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf
+    
+    # Perintah untuk menjalankan postgres dengan file konfigurasi kustom
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
